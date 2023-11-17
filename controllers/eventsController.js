@@ -47,7 +47,19 @@ function show(req, res) {
 }
 
 function update(req, res) {
-  res.send();
+  const id = req.params.id;
+  const updatedEvent = req.body;
+
+  try {
+    const isUpdated = Event.updateEvent(id, updatedEvent);
+    if (isUpdated) {
+      res.json({ message: "Evento aggiornato correttamente" });
+    } else {
+      res.status(404).json({ message: "Evento non trovato" });
+    }
+  } catch (err) {
+    next(err);
+  }
 }
 
 module.exports = {

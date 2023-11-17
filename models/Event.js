@@ -55,6 +55,29 @@ class Event {
     const events = Event.getEvents();
     return events.find((event) => event.id === id);
   }
+
+  static updateEvent(id, updatedEvent) {
+    const filePath = path.resolve(__dirname, "..", "db", "events.json");
+    try {
+      const fileData = fs.readFileSync(filePath);
+      let eventsList = JSON.parse(fileData);
+
+      const index = eventsList.findIndex((event) => event.id === id);
+
+      if (index === -1) {
+        return false;
+      }
+
+      // Update dell'evento
+      eventsList[index] = { id, ...updatedEvent };
+
+      fs.writeFileSync(filePath, JSON.stringify(eventsList, null, 2));
+      return true;
+    } catch (error) {
+      console.error("Qualcosa è andato storto nell'aggiornare l'evento", error);
+      return false;
+    }
+  }
 }
 
 module.exports = Event;
