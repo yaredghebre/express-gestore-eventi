@@ -12,7 +12,7 @@ class Event {
 
   // Metodi statici
   static getEvents() {
-    const filePath = path.join(__dirname, "..", "db", "events.json");
+    const filePath = path.resolve(__dirname, "..", "db", "events.json");
     try {
       const fileData = fs.readFileSync(filePath);
       const eventsList = JSON.parse(fileData);
@@ -24,13 +24,18 @@ class Event {
   }
 
   static saveEvents(events) {
-    const filePath = path.join(__dirname, "..", "db", "events.json");
+    const filePath = path.resolve(__dirname, "..", "db", "events.json");
     const fileData = JSON.stringify(events, null, 2);
     try {
       fs.writeFileSync(filePath, fileData);
     } catch (error) {
       console.error("Something went wrong while saving events :(", error);
     }
+  }
+
+  static getEventById(id) {
+    const events = Event.getEvents();
+    return events.find((event) => event.id === id);
   }
 }
 
