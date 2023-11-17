@@ -1,6 +1,8 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const eventsRouter = require("./routers/eventsRouter");
+const errorsFormatter = require("./middlewares/errorsFormatter");
+const routeNotFound = require("./middlewares/routeNotFound");
 
 dotenv.config();
 
@@ -15,6 +17,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/events", eventsRouter);
+
+app.use(errorsFormatter);
+app.use(routeNotFound);
 
 app.listen(process.env.PORT || 3001, () => {
   console.log(`Server running on http://localhost:${process.env.PORT}`);

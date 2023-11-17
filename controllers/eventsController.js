@@ -20,13 +20,17 @@ function index(req, res) {
 function store(req, res) {
   const { title, description, date, maxSeats } = req.body;
 
-  const addEvent = new Event(title, description, date, maxSeats);
-  const savedEvent = Event.saveEvents(addEvent);
+  try {
+    const addEvent = new Event(title, description, date, maxSeats);
+    const savedEvent = Event.saveEvents(addEvent);
 
-  if (savedEvent) {
-    res.json({ message: "Evento aggiunto!" });
-  } else {
-    res.status(500).send("Oops! Qualcosa è andato storto!");
+    if (savedEvent) {
+      res.json({ message: "Evento aggiunto!" });
+    } else {
+      throw new Error("Non è stato possibile salvare l'evento");
+    }
+  } catch (err) {
+    next(err);
   }
 }
 
@@ -36,7 +40,9 @@ function show(req, res) {
   if (event) {
     res.json(event);
   } else {
-    res.status(404).send("Event not found!");
+    res.status(404).json({
+      message: "Non qui!",
+    });
   }
 }
 
