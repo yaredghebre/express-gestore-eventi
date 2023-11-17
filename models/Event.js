@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 class Event {
-  constructor(id, title, description, date, maxSeats) {
-    this.id = id;
+  constructor(title, description, date, maxSeats) {
+    // this.id = id;
     this.title = title;
     this.description = description;
     this.date = date;
@@ -23,13 +23,31 @@ class Event {
     }
   }
 
-  static saveEvents(events) {
+  static saveEvents(newEvent) {
     const filePath = path.resolve(__dirname, "..", "db", "events.json");
-    const fileData = JSON.stringify(events, null, 2);
     try {
-      fs.writeFileSync(filePath, fileData);
+      // Leggo elenco esistente degli events
+      const fileData = fs.readFileSync(filePath);
+      const eventsList = JSON.parse(fileData);
+
+      // Trovo ID più alto nel JSON e incremento
+      const eventsIds = eventsList.map((event) => parseInt(event.id) || 0);
+      const maxId = Math.max(0, ...eventsIds);
+
+      const eventWithId = {
+        id: (maxId + 1).toString(),
+        ...newEvent,
+      };
+
+      // Pusho il nuovo event all'elenco
+      eventsList.push(eventWithId);
+
+      // Salvo elenco aggioranto nel JSON
+      fs.writeFileSync(filePath, JSON.stringify(eventsList, null, 2));
+      return true;
     } catch (error) {
       console.error("Something went wrong while saving events :(", error);
+      return false;
     }
   }
 
